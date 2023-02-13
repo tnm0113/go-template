@@ -2,8 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"os"
+
+	"github.com/spf13/cobra"
 )
 
 const probeFlag string = "probe"
@@ -29,10 +30,11 @@ var serverCmd = &cobra.Command{
 
 func init() {
 	serverCmd.Flags().BoolP(probeFlag, "p", false, "Probe readiness before startup.")
+	rootCmd.AddCommand(serverCmd)
 }
 
 func runServer() {
-
+	fmt.Println("start server")
 }
 
 func runReadiness(verbose bool) {
