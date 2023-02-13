@@ -1,5 +1,10 @@
 package config
 
+type HttpServer struct {
+	Echo   EchoServer
+	Logger LoggerServer
+}
+
 type EchoServer struct {
 	Debug                          bool
 	ListenAddress                  string
