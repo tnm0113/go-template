@@ -2,14 +2,10 @@ package service
 
 import (
 	"context"
-	"fmt"
-	"os"
 
-	"github.com/c4i/go-template/internal/config"
 	"github.com/c4i/go-template/internal/db"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type UserService interface {
@@ -18,6 +14,8 @@ type UserService interface {
 	UpdateUser(ctx context.Context, user *db.UserModel) (bool, error)
 
 	DeleteUser(ctx context.Context, id string) (int, error)
+
+	FindByUserName(ctx context.Context, username string) (*db.UserModel, error)
 }
 
 type userService struct {
@@ -26,26 +24,11 @@ type userService struct {
 
 var _ UserService = (*userService)(nil)
 
-func New(dbConfig config.MongoDB) UserService {
-	mongo := connectToMongoDB(dbConfig)
+func New(mongo *mongo.Database) UserService {
 	userRepo := db.NewUserRepository(mongo.Collection(db.USER_COLLECTION))
 	return &userService{
 		users: userRepo,
 	}
-}
-
-func connectToMongoDB(config config.MongoDB) *mongo.Database {
-	addr := fmt.Sprintf("mongodb://%s:%d/?replicaset=%s", config.Host, config.Port, config.Replica)
-	credential := options.Credential{
-		Username: config.Username,
-		Password: config.Password,
-	}
-	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(addr).SetAuth(credential))
-	if err != nil {
-		os.Exit(1)
-	}
-
-	return client.Database(config.DbName)
 }
 
 func (us *userService) CreateUser(ctx context.Context, user *db.UserModel) (interface{}, error) {
@@ -66,4 +49,8 @@ func (us *userService) DeleteUser(ctx context.Context, id string) (int, error) {
 		return -1, err
 	}
 	return us.users.DeleteByID(ctx, objID)
+}
+
+func (us *userService) FindByUserName(ctx context.Context, username string) (*db.UserModel, error) {
+	return us.users.FindByUsername(ctx, username)
 }

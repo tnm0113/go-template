@@ -2,6 +2,7 @@ package hapi
 
 import (
 	"github.com/c4i/go-template/internal/config"
+	"github.com/c4i/go-template/internal/service"
 	"github.com/labstack/echo/v4"
 )
 
@@ -9,12 +10,14 @@ type Router struct {
 	Routes     []*echo.Route
 	Root       *echo.Group
 	Management *echo.Group
+	User       *echo.Group
 }
 
 type Server struct {
-	Echo   *echo.Echo
-	Config config.HttpServer
-	Router *Router
+	Echo        *echo.Echo
+	Config      config.HttpServer
+	Router      *Router
+	UserService service.UserService
 }
 
 func NewServer() *Server {

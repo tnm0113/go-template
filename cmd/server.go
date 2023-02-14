@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/c4i/go-template/internal/config"
 	"github.com/spf13/cobra"
 )
 
@@ -34,8 +35,29 @@ func init() {
 }
 
 func runServer() {
+	cfg, err := config.LoadConfig(".")
+	if err != nil {
+		fmt.Println("read config error")
+		os.Exit(1)
+	}
+	fmt.Printf("%v", cfg)
+	// mongo := connectToMongoDB()
 	fmt.Println("start server")
 }
+
+// func connectToMongoDB(config config.MongoDB) *mongo.Database {
+// 	addr := fmt.Sprintf("mongodb://%s:%d/?replicaset=%s", config.Host, config.Port, config.Replica)
+// 	credential := options.Credential{
+// 		Username: config.Username,
+// 		Password: config.Password,
+// 	}
+// 	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(addr).SetAuth(credential))
+// 	if err != nil {
+// 		os.Exit(1)
+// 	}
+
+// 	return client.Database(config.DbName)
+// }
 
 func runReadiness(verbose bool) {
 
