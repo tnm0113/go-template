@@ -8,30 +8,30 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type UserService interface {
-	CreateUser(ctx context.Context, user *db.UserModel) (interface{}, error)
+// type UserService interface {
+// 	CreateUser(ctx context.Context, user *db.UserModel) (interface{}, error)
 
-	UpdateUser(ctx context.Context, user *db.UserModel) (bool, error)
+// 	UpdateUser(ctx context.Context, user *db.UserModel) (bool, error)
 
-	DeleteUser(ctx context.Context, id string) (int, error)
+// 	DeleteUser(ctx context.Context, id string) (int, error)
 
-	FindByUserName(ctx context.Context, username string) (*db.UserModel, error)
-}
+// 	FindByUserName(ctx context.Context, username string) (*db.UserModel, error)
+// }
 
-type userService struct {
+type UserService struct {
 	users db.UserRepository
 }
 
-var _ UserService = (*userService)(nil)
+// var _ UserService = (*userService)(nil)
 
-func New(mongo *mongo.Database) UserService {
+func New(mongo *mongo.Database) *UserService {
 	userRepo := db.NewUserRepository(mongo.Collection(db.USER_COLLECTION))
-	return &userService{
+	return &UserService{
 		users: userRepo,
 	}
 }
 
-func (us *userService) CreateUser(ctx context.Context, user *db.UserModel) (interface{}, error) {
+func (us *UserService) CreateUser(ctx context.Context, user *db.UserModel) (interface{}, error) {
 	insertedID, err := us.users.InsertOne(ctx, user)
 	if err != nil {
 		return nil, err
@@ -39,11 +39,11 @@ func (us *userService) CreateUser(ctx context.Context, user *db.UserModel) (inte
 	return insertedID, nil
 }
 
-func (us *userService) UpdateUser(ctx context.Context, user *db.UserModel) (bool, error) {
+func (us *UserService) UpdateUser(ctx context.Context, user *db.UserModel) (bool, error) {
 	return us.users.UpdateByID(ctx, user, user.ID)
 }
 
-func (us *userService) DeleteUser(ctx context.Context, id string) (int, error) {
+func (us *UserService) DeleteUser(ctx context.Context, id string) (int, error) {
 	objID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return -1, err
@@ -51,6 +51,6 @@ func (us *userService) DeleteUser(ctx context.Context, id string) (int, error) {
 	return us.users.DeleteByID(ctx, objID)
 }
 
-func (us *userService) FindByUserName(ctx context.Context, username string) (*db.UserModel, error) {
+func (us *UserService) FindByUserName(ctx context.Context, username string) (*db.UserModel, error) {
 	return us.users.FindByUsername(ctx, username)
 }

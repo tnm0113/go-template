@@ -15,12 +15,21 @@ type Router struct {
 
 type Server struct {
 	Echo        *echo.Echo
-	Config      config.HttpServer
+	Config      config.ServiceConfig
 	Router      *Router
-	UserService service.UserService
+	UserService *service.UserService
 }
 
-func NewServer() *Server {
+func NewServer(svc *service.UserService, cfg config.ServiceConfig) *Server {
+	s := &Server{
+		Echo:        nil,
+		Router:      nil,
+		Config:      cfg,
+		UserService: svc,
+	}
+	return s
+}
 
-	return nil
+func (s *Server) Start() error {
+	return s.Echo.Start(s.Config.HttpHost)
 }
