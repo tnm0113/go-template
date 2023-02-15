@@ -25,6 +25,10 @@ type ServiceConfig struct {
 	LogLevel           int  `mapstructure:"LOG_LEVEL"`
 	RequestLevel       int  `mapstructure:"REQUEST_LEVEL"`
 	PrettyPrintConsole bool `mapstructure:"PRETTY_PRINT_CONSOLE"`
+
+	//i18n
+	DefaultLanguage string `mapstructure:"DEFAULT_LANGUAGE"`
+	BundleDirAbs    string `mapstructure:"BUNDLE_DIR_ABS"`
 }
 
 func LoadConfig(path string) (cfg ServiceConfig, err error) {
