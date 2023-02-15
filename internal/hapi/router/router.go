@@ -30,5 +30,12 @@ func Init(s *hapi.Server) {
 
 	s.Echo.Use(echoMiddleware.Logger())
 
+	s.Router = &hapi.Router{
+		Routes:     nil,
+		Root:       s.Echo.Group(""),
+		Management: s.Echo.Group("/-"),
+		User:       s.Echo.Group("/user"),
+	}
+
 	handlers.AttackAllRoutes(s)
 }

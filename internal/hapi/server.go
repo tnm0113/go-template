@@ -1,6 +1,9 @@
 package hapi
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/c4i/go-template/internal/config"
 	"github.com/c4i/go-template/internal/service"
 	"github.com/labstack/echo/v4"
@@ -30,6 +33,16 @@ func NewServer(svc *service.UserService, cfg config.ServiceConfig) *Server {
 	return s
 }
 
+func (s *Server) Ready() bool {
+	return s.Echo != nil &&
+		s.Router != nil &&
+		s.UserService != nil
+}
+
 func (s *Server) Start() error {
-	return s.Echo.Start(s.Config.HttpHost)
+	if !s.Ready() {
+		return errors.New("server is not ready")
+	}
+	httpAddress := fmt.Sprintf("%s:%d", s.Config.HttpHost, s.Config.HttpPort)
+	return s.Echo.Start(httpAddress)
 }

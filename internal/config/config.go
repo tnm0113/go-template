@@ -39,3 +39,7 @@ func LoadConfig(path string) (cfg ServiceConfig, err error) {
 
 	return
 }
+
+func SetDefaultValue() {
+
+}

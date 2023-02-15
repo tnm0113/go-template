@@ -8,7 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func getUserRoute(s *hapi.Server) *echo.Route {
+func GetUserRoute(s *hapi.Server) *echo.Route {
 	return s.Router.User.GET("/users", getUserHandlers(s))
 }
 

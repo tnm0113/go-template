@@ -7,6 +7,7 @@ import (
 	"github.com/c4i/go-template/internal/config"
 	"github.com/c4i/go-template/internal/db"
 	"github.com/c4i/go-template/internal/hapi"
+	"github.com/c4i/go-template/internal/hapi/router"
 	"github.com/c4i/go-template/internal/service"
 	"github.com/spf13/cobra"
 )
@@ -43,17 +44,21 @@ func runServer() {
 		fmt.Println("read config error")
 		os.Exit(1)
 	}
-	fmt.Printf("%v", cfg)
+	fmt.Printf("%v \n", cfg)
 
 	mongo, err := db.ConnectToMongoDB(cfg)
 	if err != nil {
-		fmt.Printf("Failed to connect to Mongo")
+		fmt.Printf("Failed to connect to Mongo %v", err)
 	}
 	svc := service.New(mongo)
 
 	fmt.Println("start http server")
 	http_server := hapi.NewServer(svc, cfg)
-	http_server.Start()
+	router.Init(http_server)
+	err = http_server.Start()
+	if err != nil {
+		fmt.Printf("Failed to start http server %v \n", err)
+	}
 }
 
 func runReadiness(verbose bool) {
