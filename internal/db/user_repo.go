@@ -38,6 +38,16 @@ func (r *UserRepositoryMongo) FindByUsername(arg0 context.Context, arg1 string) 
 	return &entity, nil
 }
 
+func (r *UserRepositoryMongo) FindByID(arg0 context.Context, arg1 primitive.ObjectID) (*UserModel, error) {
+	var entity UserModel
+	if err := r.collection.FindOne(arg0, bson.M{
+		"_id": arg1,
+	}, options.FindOne().SetSort(bson.M{})).Decode(&entity); err != nil {
+		return nil, err
+	}
+	return &entity, nil
+}
+
 func (r *UserRepositoryMongo) UpdateByID(arg0 context.Context, arg1 *UserModel, arg2 primitive.ObjectID) (bool, error) {
 	result, err := r.collection.UpdateOne(arg0, bson.M{
 		"_id": arg2,

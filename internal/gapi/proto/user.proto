@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "github.com/c4i/go-template/internal/gapi/pb";
+
+message UserInfo {
+    string id = 1;
+    string userName = 2;
+    string firstName = 3;
+    string lastName = 4;
+    int32 age = 5;
+}
+
+message UserId {
+    string value = 1;
+}
+
+service UserService {
+    rpc GetUserById(UserId) returns (UserInfo) {}
+}
+

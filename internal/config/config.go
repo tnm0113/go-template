@@ -20,6 +20,7 @@ type ServiceConfig struct {
 
 	//GRPC config
 	GrpcPort int `mapstructure:"GRPC_PORT"`
+	GrpcHost int `mapstructure:"GRPC_HOST"`
 
 	//Logger config
 	LogLevel           int  `mapstructure:"LOG_LEVEL"`

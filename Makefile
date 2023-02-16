@@ -34,3 +34,9 @@ LDFLAGS = $(eval LDFLAGS := "\
 
 go-build: ##- (opt) Runs go build.
 	go build -ldflags $(LDFLAGS) -o bin/app
+
+proto:
+	rm -rf internal/gapi/pb/*.go
+	protoc --proto_path=internal/gapi/proto --go_opt=paths=source_relative --go_out=internal/gapi/pb \
+	--go-grpc_out=internal/gapi/pb --go-grpc_opt=paths=source_relative \
+	internal/gapi/proto/*.proto

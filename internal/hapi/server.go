@@ -39,10 +39,10 @@ func (s *Server) Ready() bool {
 		s.UserService != nil
 }
 
-func (s *Server) Start() error {
+func (s *Server) Start(errs chan error) {
 	if !s.Ready() {
-		return errors.New("server is not ready")
+		errs <- errors.New("server is not ready")
 	}
 	httpAddress := fmt.Sprintf("%s:%d", s.Config.HttpHost, s.Config.HttpPort)
-	return s.Echo.Start(httpAddress)
+	errs <- s.Echo.Start(httpAddress)
 }

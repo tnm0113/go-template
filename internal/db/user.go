@@ -30,6 +30,9 @@ type UserRepository interface {
 	// returned.
 	FindByUsername(ctx context.Context, username string) (*UserModel, error)
 
+	// FindByID get a single user by ID
+	FindByID(ctx context.Context, id primitive.ObjectID) (*UserModel, error)
+
 	// UpdateByID updates a single document by ID
 	UpdateByID(ctx context.Context, model *UserModel, id primitive.ObjectID) (bool, error)
 
