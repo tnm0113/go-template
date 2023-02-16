@@ -15,7 +15,7 @@ import (
 const probeFlag string = "probe"
 
 var serverCmd = &cobra.Command{
-	Use:   "server",
+	Use:   "start",
 	Short: "Starts the server",
 	Long:  "Starts server",
 	Run: func(cmd *cobra.Command, args []string) {

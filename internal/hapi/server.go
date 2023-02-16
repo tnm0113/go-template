@@ -13,7 +13,7 @@ type Router struct {
 	Routes     []*echo.Route
 	Root       *echo.Group
 	Management *echo.Group
-	User       *echo.Group
+	// API        *echo.Group
 }
 
 type Server struct {

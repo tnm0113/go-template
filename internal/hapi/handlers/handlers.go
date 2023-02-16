@@ -11,5 +11,6 @@ func AttackAllRoutes(s *hapi.Server) {
 	s.Router.Routes = []*echo.Route{
 		common.GetVersionRoute(s),
 		user.GetUserRoute(s),
+		user.CreateUserRoute(s),
 	}
 }

@@ -2,10 +2,11 @@ package i18n
 
 import (
 	"fmt"
-	"github.com/c4i/go-template/internal/config"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/c4i/go-template/internal/config"
 
 	"github.com/BurntSushi/toml"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -38,7 +39,9 @@ type Data map[string]string
 // Note that Service is typically created and owned by the api.Server (use it via s.I18n)
 func New(config config.ServiceConfig) (*Service, error) {
 
-	bundle := i18n.NewBundle(config.DefaultLanguage)
+	// TODO: set config default language
+	// bundle := i18n.NewBundle(config.DefaultLanguage)
+	bundle := i18n.NewBundle(language.English)
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 
 	// Load all translation files in each language...
