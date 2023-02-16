@@ -54,3 +54,8 @@ func (us *UserService) DeleteUser(ctx context.Context, id string) (int, error) {
 func (us *UserService) FindByUserName(ctx context.Context, username string) (*db.UserModel, error) {
 	return us.users.FindByUsername(ctx, username)
 }
+
+func (us *UserService) FindById(ctx context.Context, id string) (*db.UserModel, error) {
+	objID, _ := primitive.ObjectIDFromHex(id)
+	return us.users.FindByID(ctx, objID)
+}
