@@ -12,6 +12,7 @@ import (
 	"github.com/c4i/go-template/internal/hapi"
 	"github.com/c4i/go-template/internal/hapi/router"
 	"github.com/c4i/go-template/internal/service"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -47,6 +48,10 @@ func runServer() {
 	if err != nil {
 		log.Fatal().Err(err).Msg("read config error")
 		os.Exit(1)
+	}
+
+	if cfg.Environment == "development" {
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	}
 
 	mongo, err := db.ConnectToMongoDB(cfg)

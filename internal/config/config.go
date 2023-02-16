@@ -3,6 +3,8 @@ package config
 import "github.com/spf13/viper"
 
 type ServiceConfig struct {
+	Environment string `mapstructure:"ENVIRONMENT"`
+
 	//DB config
 	DBHost    string `mapstructure:"DB_HOST"`
 	DBPort    int    `mapstructure:"DB_PORT"`
@@ -38,6 +40,8 @@ func LoadConfig(path string) (cfg ServiceConfig, err error) {
 	viper.SetConfigType("env")
 	viper.AutomaticEnv()
 
+	setDefaultValue()
+
 	err = viper.ReadInConfig()
 
 	viper.Unmarshal(&cfg)
@@ -45,6 +49,10 @@ func LoadConfig(path string) (cfg ServiceConfig, err error) {
 	return
 }
 
-func SetDefaultValue() {
+func setDefaultValue() {
+	viper.SetDefault("ENVIRONMENT", "development")
 
+	viper.SetDefault("DB_HOST", "127.0.0.1")
+	viper.SetDefault("DB_PORT", 27017)
+	viper.SetDefault("DB_NAME", "mongo")
 }
