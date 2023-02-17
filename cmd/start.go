@@ -67,6 +67,7 @@ func runServer() {
 
 	log.Info().Msg("start http server")
 	http_server := hapi.NewServer(svc, cfg)
+	http_server.InitI18n()
 	router.Init(http_server)
 	go http_server.Start(errs)
 

@@ -9,6 +9,7 @@ import (
 	"github.com/c4i/go-template/internal/types/user"
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"golang.org/x/text/language"
 )
 
 func CreateUserRoute(s *hapi.Server) *echo.Route {
@@ -38,7 +39,8 @@ func createUserHandler(s *hapi.Server) echo.HandlerFunc {
 			}
 			return c.JSON(http.StatusCreated, res)
 		} else {
-			return c.JSON(http.StatusInternalServerError, errors.New("invalid insertedId from mongodb"))
+			msg := s.I18n.Translate("User.invalid_insertedId", language.English)
+			return c.JSON(http.StatusInternalServerError, errors.New(msg))
 		}
 	}
 }

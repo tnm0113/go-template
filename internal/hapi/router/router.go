@@ -34,7 +34,6 @@ func Init(s *hapi.Server) {
 		Routes:     nil,
 		Root:       s.Echo.Group(""),
 		Management: s.Echo.Group("/-"),
-		// API:        s.Echo.Group("/api"),
 	}
 
 	handlers.AttackAllRoutes(s)

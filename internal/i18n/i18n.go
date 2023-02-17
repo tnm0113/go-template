@@ -41,7 +41,11 @@ func New(config config.ServiceConfig) (*Service, error) {
 
 	// TODO: set config default language
 	// bundle := i18n.NewBundle(config.DefaultLanguage)
-	bundle := i18n.NewBundle(language.English)
+	t, err := language.Parse(config.OtherConfig.DefaultLanguage)
+	if err != nil {
+		log.Err(err).Str("lang", config.OtherConfig.DefaultLanguage).Msg("Failed to parse language")
+	}
+	bundle := i18n.NewBundle(t)
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 
 	// Load all translation files in each language...
