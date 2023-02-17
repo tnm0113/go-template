@@ -1,58 +1,43 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"github.com/spf13/viper"
+)
 
 type ServiceConfig struct {
-	Environment string `mapstructure:"ENVIRONMENT"`
-
-	//DB config
-	DBHost    string `mapstructure:"DB_HOST"`
-	DBPort    int    `mapstructure:"DB_PORT"`
-	DBName    string `mapstructure:"DB_NAME"`
-	DBUser    string `mapstructure:"DB_USER"`
-	DBPass    string `mapstructure:"DB_PASS"`
-	DBReplica string `mapstructure:"DB_REPLICA"`
-
-	//HTTP config
-	HttpHost                string `mapstructure:"HTTP_HOST"`
-	HttpPort                int    `mapstructure:"HTTP_PORT"`
-	EnableRecoverMiddleware bool   `mapstructure:"ENABLE_RECOVER_MIDDLEWARE"`
-	EnableCORSMiddleware    bool   `mapstructure:"ENABLE_CORS_MIDDLEWARE"`
-	EchoDebug               bool   `mapstructure:"ECHO_DEBUG"`
-
-	//GRPC config
-	GrpcPort int `mapstructure:"GRPC_PORT"`
-	GrpcHost int `mapstructure:"GRPC_HOST"`
-
-	//Logger config
-	LogLevel           int  `mapstructure:"LOG_LEVEL"`
-	RequestLevel       int  `mapstructure:"REQUEST_LEVEL"`
-	PrettyPrintConsole bool `mapstructure:"PRETTY_PRINT_CONSOLE"`
-
-	//i18n
-	DefaultLanguage string `mapstructure:"DEFAULT_LANGUAGE"`
-	BundleDirAbs    string `mapstructure:"BUNDLE_DIR_ABS"`
+	DbConfig       MongoConfig
+	GrpcConfig     GrpcConfig
+	HttpConfig     HttpConfig
+	LoggerConfig   LoggerConfig
+	RabbitmqConfig RabbitMQConfig
+	OtherConfig    OtherConfig
 }
 
 func LoadConfig(path string) (cfg ServiceConfig, err error) {
 	viper.AddConfigPath(path)
 	viper.SetConfigName("app")
-	viper.SetConfigType("env")
-	viper.AutomaticEnv()
+	viper.SetConfigType("yaml")
 
 	setDefaultValue()
 
 	err = viper.ReadInConfig()
 
-	viper.Unmarshal(&cfg)
+	viper.UnmarshalKey("mongo", &cfg.DbConfig)
+	viper.UnmarshalKey("grpc", &cfg.GrpcConfig)
+	viper.UnmarshalKey("http", &cfg.HttpConfig)
+	viper.UnmarshalKey("log", &cfg.LoggerConfig)
+	viper.UnmarshalKey("rabbitmq", &cfg.RabbitmqConfig)
+	viper.UnmarshalKey("other", &cfg.OtherConfig)
 
 	return
 }
 
 func setDefaultValue() {
-	viper.SetDefault("ENVIRONMENT", "development")
+	viper.SetDefault("other.environment", "development")
 
-	viper.SetDefault("DB_HOST", "127.0.0.1")
-	viper.SetDefault("DB_PORT", 27017)
-	viper.SetDefault("DB_NAME", "mongo")
+	viper.SetDefault("mongo.host", "127.0.0.1")
+	viper.SetDefault("mongo.port", 27017)
+	viper.SetDefault("mongo.name", "mongo")
+	viper.SetDefault("mongo.user", "mongo")
+	viper.SetDefault("mongo.pass", "mongo")
 }

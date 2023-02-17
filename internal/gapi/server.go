@@ -31,7 +31,7 @@ func (s *Server) Start(errs chan error) {
 	grpcServer := grpc.NewServer(grpcLogger)
 	pb.RegisterUserServiceServer(grpcServer, s)
 	reflection.Register(grpcServer)
-	grpcAddress := fmt.Sprintf("%v:%d", s.Config.GrpcHost, s.Config.GrpcPort)
+	grpcAddress := fmt.Sprintf("%v:%d", s.Config.GrpcConfig.GrpcHost, s.Config.GrpcConfig.GrpcPort)
 	listener, err := net.Listen("tcp", grpcAddress)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Cannot create grpc listener")

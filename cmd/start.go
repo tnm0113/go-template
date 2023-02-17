@@ -50,8 +50,10 @@ func runServer() {
 		os.Exit(1)
 	}
 
-	if cfg.Environment == "development" {
-		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	log.Debug().Msgf("config %v", cfg)
+
+	if cfg.OtherConfig.Environment == "development" {
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "15:04:05 02-01-2006"})
 	}
 
 	mongo, err := db.ConnectToMongoDB(cfg)

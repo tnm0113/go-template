@@ -12,17 +12,17 @@ import (
 func Init(s *hapi.Server) {
 	s.Echo = echo.New()
 
-	s.Echo.Debug = s.Config.EchoDebug
+	s.Echo.Debug = s.Config.HttpConfig.EchoDebug
 	s.Echo.HideBanner = true
-	s.Echo.Logger.SetOutput(&echoLogger{level: zerolog.Level(s.Config.RequestLevel), log: log.With().Str("component", "echo").Logger()})
+	s.Echo.Logger.SetOutput(&echoLogger{level: zerolog.Level(s.Config.LoggerConfig.RequestLevel), log: log.With().Str("component", "echo").Logger()})
 
-	if s.Config.EnableRecoverMiddleware {
+	if s.Config.HttpConfig.EnableRecoverMiddleware {
 		s.Echo.Use(echoMiddleware.Recover())
 	} else {
 		log.Warn().Msg("Disabling recover middleware due to environment config")
 	}
 
-	if s.Config.EnableCORSMiddleware {
+	if s.Config.HttpConfig.EnableCORSMiddleware {
 		s.Echo.Use(echoMiddleware.CORS())
 	} else {
 		log.Warn().Msg("Disabling CORS middleware due to environment config")

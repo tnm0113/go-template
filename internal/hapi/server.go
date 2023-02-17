@@ -43,6 +43,6 @@ func (s *Server) Start(errs chan error) {
 	if !s.Ready() {
 		errs <- errors.New("server is not ready")
 	}
-	httpAddress := fmt.Sprintf("%s:%d", s.Config.HttpHost, s.Config.HttpPort)
+	httpAddress := fmt.Sprintf("%s:%d", s.Config.HttpConfig.HttpHost, s.Config.HttpConfig.HttpPort)
 	errs <- s.Echo.Start(httpAddress)
 }

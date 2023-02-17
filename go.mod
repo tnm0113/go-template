@@ -47,6 +47,7 @@ require (
 	github.com/labstack/gommon v0.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
+	github.com/rabbitmq/amqp091-go v1.7.0
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.15.0
 	github.com/valyala/bytebufferpool v1.0.0 // indirect

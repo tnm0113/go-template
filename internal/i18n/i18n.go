@@ -45,9 +45,9 @@ func New(config config.ServiceConfig) (*Service, error) {
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 
 	// Load all translation files in each language...
-	files, err := os.ReadDir(config.BundleDirAbs)
+	files, err := os.ReadDir(config.OtherConfig.BundleDirAbs)
 	if err != nil {
-		log.Err(err).Str("dir", config.BundleDirAbs).Msg("Failed to read i18n bundle directory")
+		log.Err(err).Str("dir", config.OtherConfig.BundleDirAbs).Msg("Failed to read i18n bundle directory")
 		return nil, err
 	}
 
@@ -57,7 +57,7 @@ func New(config config.ServiceConfig) (*Service, error) {
 		}
 
 		// bundle.LoadMessageFile automatically guesses the language.Tag based on the filenames it encounters
-		_, err := bundle.LoadMessageFile(filepath.Join(config.BundleDirAbs, file.Name()))
+		_, err := bundle.LoadMessageFile(filepath.Join(config.OtherConfig.BundleDirAbs, file.Name()))
 		if err != nil {
 			log.Err(err).Str("file", file.Name()).Msg("Failed to load i18n message file")
 			return nil, err

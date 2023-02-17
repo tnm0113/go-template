@@ -10,15 +10,15 @@ import (
 )
 
 func ConnectToMongoDB(config config.ServiceConfig) (*mongo.Database, error) {
-	addr := fmt.Sprintf("mongodb://%s:%d/?replicaset=%s", config.DBHost, config.DBPort, config.DBReplica)
+	addr := fmt.Sprintf("mongodb://%s:%d/?replicaset=%s", config.DbConfig.DBHost, config.DbConfig.DBPort, config.DbConfig.DBReplica)
 	credential := options.Credential{
-		Username: config.DBUser,
-		Password: config.DBPass,
+		Username: config.DbConfig.DBUser,
+		Password: config.DbConfig.DBPass,
 	}
 	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(addr).SetAuth(credential))
 	if err != nil {
 		return nil, err
 	}
 
-	return client.Database(config.DBName), nil
+	return client.Database(config.DbConfig.DBName), nil
 }
