@@ -1,7 +1,10 @@
 mongo:
   host: "127.0.0.1"
   port: 27017
-  name: "user"
+  name: "quanuh-test"
+  replica: ""
   user: "mongo"
   pass: "mongo"
-  replica: ""
+rabbitmq:
+  host: "192.168.205.38"
+  port: 30072

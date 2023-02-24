@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "pkg/pb";
+
+message UserInfo {
+    string ID = 1;//`json:"id,omitempty" bson:"_id,omitempty" `
+    string UserName = 2;//`json:"user_name" bson:"user_name" validate:"required"`
+    string FirstName = 3;//`json:"first_name,omitempty" bson:"first_name,omitempty"`
+    string LastName = 4;//`json:"last_name,omitempty" bson:"last_name,omitempty"`
+    int32 Age = 5;//`json:"age,omitempty" bson:"age,omitempty" validate:"gte=0,lte=130"`
+    string Email = 6;//`json:"email" bson:"email" validate:"required,email"`
+}
+
+message UserId {
+    string Value = 1;//`json:"value,omitempty" bson:"value,omitempty"`
+}
+
+service UserService {
+    rpc GetUserById(UserId) returns (UserInfo) {}
+}
+

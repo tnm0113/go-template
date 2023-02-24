@@ -1,6 +1,9 @@
 package config
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 // The following vars are automatically injected via -ldflags.
 // See Makefile target "make go-build" and make var $(LDFLAGS).
@@ -12,7 +15,12 @@ var (
 	BuildDate  = "1970-01-01T00:00:00+00:00"                // e.g. "1970-01-01T00:00:00+00:00"
 )
 
+func GetModuleName() string {
+	splits := strings.Split(ModuleName, "/")
+	return splits[len(splits)-1]
+}
+
 // GetFormattedBuildArgs returns string representation of buildsargs set via ldflags "<ModuleName> @ <Commit> (<BuildDate>)"
 func GetFormattedBuildArgs() string {
-	return fmt.Sprintf("%v @ %v (%v)", ModuleName, Commit, BuildDate)
+	return fmt.Sprintf("%v @ %v (%v)", GetModuleName(), Commit, BuildDate)
 }

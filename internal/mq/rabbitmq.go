@@ -1,15 +1,19 @@
 package mq
 
 import (
+	"context"
 	"fmt"
-	"log"
 	"sync"
 	"time"
 
-	"github.com/c4i/go-template/internal/config"
+	"192.168.205.151/vq2-go/go-template/internal/config"
 	"github.com/pkg/errors"
 	"github.com/rabbitmq/amqp091-go"
+	"github.com/rs/zerolog/log"
 )
+
+const EXCHANGE_NAME string = "system-event"
+const EXCHANGE_TYPE string = "topic"
 
 type RabbitMQ struct {
 	mux                  sync.RWMutex
@@ -19,11 +23,12 @@ type RabbitMQ struct {
 	ChannelNotifyTimeout time.Duration
 }
 
-func New(config config.RabbitMQConfig) *RabbitMQ {
+func New(cfg config.RabbitMQConfig) *RabbitMQ {
+	moduleName := config.GetModuleName()
 	return &RabbitMQ{
-		config:               config,
-		dialConfig:           amqp091.Config{Properties: amqp091.Table{"connection_name": config.ConnectionName}},
-		ChannelNotifyTimeout: time.Duration(config.ChannelNotifyTimeout),
+		config:               cfg,
+		dialConfig:           amqp091.Config{Properties: amqp091.Table{"connection_name": moduleName}},
+		ChannelNotifyTimeout: time.Duration(cfg.ChannelNotifyTimeout),
 	}
 }
 
@@ -96,7 +101,7 @@ WATCH:
 
 	conErr := <-r.connection.NotifyClose(make(chan *amqp091.Error))
 	if conErr != nil {
-		log.Println("CRITICAL: Connection dropped, reconnecting")
+		log.Error().Msg("CRITICAL: Connection dropped, reconnecting")
 
 		var err error
 
@@ -114,7 +119,7 @@ WATCH:
 			r.mux.RUnlock()
 
 			if err == nil {
-				log.Println("INFO: Reconnected")
+				log.Info().Msg("Reconnected")
 
 				goto WATCH
 			}
@@ -122,8 +127,100 @@ WATCH:
 			time.Sleep(time.Duration(r.config.ReconnectInterval))
 		}
 
-		log.Println(errors.Wrap(err, "CRITICAL: Failed to reconnect"))
+		log.Error().Err(err).Msg("CRITICAL: Failed to reconnect")
 	} else {
-		log.Println("INFO: Connection dropped normally, will not reconnect")
+		log.Info().Msg("Connection dropped normally, will not reconnect")
 	}
+}
+
+func (r *RabbitMQ) Declare() error {
+	moduleName := config.GetModuleName()
+	channel, err := r.Channel()
+	if err != nil {
+		return err
+	}
+	if err := channel.ExchangeDeclare(
+		EXCHANGE_NAME,
+		EXCHANGE_TYPE,
+		true,
+		false,
+		false,
+		false,
+		nil,
+	); err != nil {
+		return errors.Wrap(err, "failed to declare exchange")
+	}
+
+	if _, err := channel.QueueDeclare(
+		moduleName,
+		true,
+		false,
+		false,
+		false,
+		amqp091.Table{"x-queue-mode": "lazy"},
+	); err != nil {
+		return errors.Wrap(err, "failed to declare queue")
+	}
+	return nil
+}
+
+func (r *RabbitMQ) Publish(message, topic string) error {
+	channel, err := r.Channel()
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to get channel")
+		return err
+	}
+	defer channel.Close()
+
+	if err := channel.Confirm(false); err != nil {
+		return errors.Wrap(err, "failed to put channel in confirmation mode")
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := channel.PublishWithContext(
+		ctx,
+		EXCHANGE_NAME,
+		topic,
+		true,
+		false,
+		amqp091.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(message),
+		},
+	); err != nil {
+		return errors.Wrap(err, "failed to publish message")
+	}
+
+	select {
+	case ntf := <-channel.NotifyPublish(make(chan amqp091.Confirmation, 1)):
+		if !ntf.Ack {
+			return errors.New("failed to deliver message to exchange/queue")
+		}
+	case <-channel.NotifyReturn(make(chan amqp091.Return)):
+		return errors.New("failed to deliver message to exchange/queue")
+	case <-time.After(time.Duration(r.config.ChannelNotifyTimeout)):
+		log.Debug().Msg("message delivery confirmation to exchange/queue timed out")
+	}
+
+	return nil
+}
+
+func (r *RabbitMQ) Subcribe(topic string) error {
+	moduleName := config.GetModuleName()
+	channel, err := r.Channel()
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to get channel")
+		return err
+	}
+	if err := channel.QueueBind(
+		moduleName,
+		topic,
+		EXCHANGE_NAME,
+		false,
+		nil,
+	); err != nil {
+		return errors.Wrap(err, "failed to bind queue")
+	}
+	return nil
 }

@@ -1,0 +1,78 @@
+basePath: /v2
+definitions:
+  db.UserModel:
+    properties:
+      age:
+        type: integer
+      firstname:
+        type: string
+      id:
+        type: string
+      lastname:
+        type: string
+      username:
+        type: string
+    type: object
+  pb.UserInfo:
+    properties:
+      age:
+        type: integer
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      user_name:
+        type: string
+    type: object
+  types.ErrorResponse:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: status bad request
+        type: string
+    type: object
+host: petstore.swagger.io
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample Go Template server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Go Template Project API
+  version: "1.0"
+paths:
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user
+      parameters:
+      - description: User
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/pb.UserInfo'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/db.UserModel'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/types.ErrorResponse'
+      summary: Create a user
+      tags:
+      - users
+swagger: "2.0"

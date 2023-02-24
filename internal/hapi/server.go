@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/c4i/go-template/internal/config"
-	"github.com/c4i/go-template/internal/i18n"
-	"github.com/c4i/go-template/internal/service"
+	"192.168.205.151/vq2-go/go-template/internal/config"
+	"192.168.205.151/vq2-go/go-template/internal/i18n"
+	"192.168.205.151/vq2-go/go-template/internal/service"
 	"github.com/labstack/echo/v4"
 )
 
@@ -38,8 +38,7 @@ func NewServer(svc *service.UserService, cfg config.ServiceConfig) *Server {
 func (s *Server) Ready() bool {
 	return s.Echo != nil &&
 		s.Router != nil &&
-		s.UserService != nil &&
-		s.I18n != nil
+		s.UserService != nil
 }
 
 func (s *Server) InitI18n() error {

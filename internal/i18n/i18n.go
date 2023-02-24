@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/c4i/go-template/internal/config"
+	"192.168.205.151/vq2-go/go-template/internal/config"
 
 	"github.com/BurntSushi/toml"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -43,7 +43,7 @@ func New(config config.ServiceConfig) (*Service, error) {
 	// bundle := i18n.NewBundle(config.DefaultLanguage)
 	t, err := language.Parse(config.OtherConfig.DefaultLanguage)
 	if err != nil {
-		log.Err(err).Str("lang", config.OtherConfig.DefaultLanguage).Msg("Failed to parse language")
+		log.Err(err).Str("lang", config.OtherConfig.DefaultLanguage).Msg("Failed to parse language, I18n is not ready")
 	}
 	bundle := i18n.NewBundle(t)
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
@@ -51,7 +51,7 @@ func New(config config.ServiceConfig) (*Service, error) {
 	// Load all translation files in each language...
 	files, err := os.ReadDir(config.OtherConfig.BundleDirAbs)
 	if err != nil {
-		log.Err(err).Str("dir", config.OtherConfig.BundleDirAbs).Msg("Failed to read i18n bundle directory")
+		log.Err(err).Str("dir", config.OtherConfig.BundleDirAbs).Msg("Failed to read i18n bundle directory, I18n is not ready")
 		return nil, err
 	}
 

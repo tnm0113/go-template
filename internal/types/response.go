@@ -11,3 +11,14 @@ type Response interface {
 	// Empty indicates if HTTP response has content.
 	Empty() bool
 }
+
+// HTTPError example
+type ErrorResponse struct {
+	Code    int    `json:"code" example:"400"`
+	Message string `json:"message" example:"status bad request"`
+}
+
+type SucceedResponse struct {
+	Success bool        `json:"success"`
+	Data    interface{} `json:"data,omitempty"`
+}

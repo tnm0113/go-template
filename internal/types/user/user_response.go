@@ -3,7 +3,7 @@ package user
 import (
 	"net/http"
 
-	"github.com/c4i/go-template/internal/types"
+	"192.168.205.151/vq2-go/go-template/internal/types"
 )
 
 var _ types.Response = (*UserResponse)(nil)

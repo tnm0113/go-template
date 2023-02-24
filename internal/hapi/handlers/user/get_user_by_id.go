@@ -10,18 +10,18 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func GetUserRoute(s *hapi.Server) *echo.Route {
-	return s.Router.Root.GET("/users", getUserHandlers(s))
+func GetUserByIdRoute(s *hapi.Server) *echo.Route {
+	return s.Router.Root.GET("/users/:id", getUserByIdHandler(s))
 }
 
-func getUserHandlers(s *hapi.Server) echo.HandlerFunc {
+func getUserByIdHandler(s *hapi.Server) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		username := c.QueryParam("username")
+		id := c.Param("id")
 		ctx := c.Request().Context()
-		u, err := s.UserService.FindByUserName(ctx, username)
+		u, err := s.UserService.FindById(ctx, id)
 		fmt.Printf("Find user %v \n", u)
 		if err != nil {
-			log.Error().Err(err).Msg("FindByUserName error")
+			log.Error().Err(err).Msg("FindById error")
 			return c.JSON(http.StatusNotFound, err)
 		}
 

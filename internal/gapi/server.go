@@ -4,16 +4,16 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/c4i/go-template/internal/config"
-	"github.com/c4i/go-template/internal/gapi/pb"
-	"github.com/c4i/go-template/internal/service"
+	"192.168.205.151/vq2-go/go-template/internal/config"
+	"192.168.205.151/vq2-go/go-template/internal/gapi/user"
+	"192.168.205.151/vq2-go/go-template/internal/service"
+	"192.168.205.151/vq2-go/go-template/pkg/pb"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
 type Server struct {
-	pb.UnimplementedUserServiceServer
 	Config      config.ServiceConfig
 	UserService *service.UserService
 }
@@ -28,8 +28,11 @@ func NewServer(cfg config.ServiceConfig, svc *service.UserService) *Server {
 
 func (s *Server) Start(errs chan error) {
 	grpcLogger := grpc.UnaryInterceptor(GrpcLogger)
+	// embedded logger to grpc server
 	grpcServer := grpc.NewServer(grpcLogger)
-	pb.RegisterUserServiceServer(grpcServer, s)
+	// Register pb user service with grpc server
+	userHandler := user.NewHandler(s.UserService)
+	pb.RegisterUserServiceServer(grpcServer, userHandler)
 	reflection.Register(grpcServer)
 	grpcAddress := fmt.Sprintf("%v:%d", s.Config.GrpcConfig.GrpcHost, s.Config.GrpcConfig.GrpcPort)
 	listener, err := net.Listen("tcp", grpcAddress)
