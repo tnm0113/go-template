@@ -101,7 +101,6 @@ func runServer() {
 		log.Fatal().Err(err).Msg("Failed to connect to MongoDB")
 		os.Exit(1)
 	}
-	db := client.Database(cfg.DbConfig.DBName)
 
 	rabbit := mq.New(cfg.RabbitmqConfig)
 	err = rabbit.Connect()
@@ -120,19 +119,19 @@ func runServer() {
 		log.Error().Err(err).Msg("Failed to subcribe")
 	}
 
-	svc := service.New(db, rabbit)
+	svc := service.New(client, rabbit, cfg)
 
 	errs := make(chan error, 2)
 
 	log.Info().Msg("start http server")
-	http_server := hapi.NewServer(svc, cfg)
-	http_server.InitI18n()
-	router.Init(http_server)
-	go http_server.Start(errs)
+	httpServer := hapi.NewServer(svc, cfg)
+	httpServer.InitI18n()
+	router.Init(httpServer)
+	go httpServer.Start(errs)
 
 	log.Info().Msg("start grpc server")
-	grpc_server := gapi.NewServer(cfg, svc)
-	go grpc_server.Start(errs)
+	grpcServer := gapi.NewServer(cfg, svc)
+	go grpcServer.Start(errs)
 
 	go func() {
 		c := make(chan os.Signal, 1)
