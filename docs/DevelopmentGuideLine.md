@@ -9,7 +9,6 @@ git clone --recurse-submodules git@192.168.205.151:vq2/vq2-go/go-template.git
 cp -r go-template new-module-folder
 cd new-module-folder/
 rm -rf .git
-rm -rf setup/
 make set-module-name
 make tidy
 make tools
